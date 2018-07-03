@@ -4,17 +4,56 @@
 #define N ((1<<16)+1)
 
 int A[N];
+int i, j, pivot;
 
 /*
 A[0], A[1], ..., A[n-1] の中でk+1番目に小さい値を返す関数
 ただし、Aの中身は書き換えてしまう。
 */
-int quick_select(int A[], int n, int k){
-  int i, j, pivot;
+void quick_sort(int A[ ], int n){
+    int i ,j ,pivot ;
+    if(n<=1)return;
+    pivot = A[0];
+    for(i = j = 1; i < n; i++){
+        if(A[i] < pivot){
+            int z = A[j];
+            A[j] = A[i];
+            A[i] = z;
+            j++;
+        }
+    }
+    int x=A[0];
+    A[0]=A[j-1];
+    A[j-1]=x;
+    quick_sort(A,j-1);
+    quick_sort(A+j,n-j);
+    
+}
 
-// 先頭の要素をピボットとする
-  pivot = A[0];
-  for(i = j = 1; i < n; i++){
+int quick_select(int A[], int n, int k){
+	if(n>5){
+  	for(i=0;i<n/5;i++){
+  		quick_sort(A+5*i,5);
+  		int z = A[i+1];
+      A[i+1] = A[3+5*i];
+      A[3+5*i] = z;}
+      if(n%5==1){
+      A[n/5+1]=A[n-1];     
+      }else if(n%5==2){
+     A[n/5+1]=(A[n-2]+A[n-1])/2;
+     }else if(n%5==3){
+     	A[n/5+1]=A[n-2];
+     }else if (n%5==4){
+     	A[n/5+1]=(A[n-3]+A[n-2])/2;}
+     if((n-1)/5+1%2==0){
+     	pivot=(A[((n-1)/5+1)/2]+A[((n-1)/5+1)/2-1])/2;
+     }else{pivot=A[((n-1)/5+1)/2];}
+	}else{
+	if(n%2==0){
+		pivot=(A[n/2]+A[n/2-1])/2;
+	}else{pivot=A[n/2];}}
+  	
+  for(i = j = 0; i < n; i++){
     if(A[i] <= pivot){
       int z = A[j];
       A[j] = A[i];
@@ -25,7 +64,7 @@ int quick_select(int A[], int n, int k){
 
   if(j == k+1) return pivot;
   else if(j < k+1) return quick_select(A+j, n-j, k-j);
-  else return quick_select(A+1, j-1, k);
+  else return quick_select(A, j-1, k);
 }
 
 int main(){
